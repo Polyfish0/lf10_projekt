@@ -1,1 +1,8 @@
+<mat-toolbar>
+  <span><button mat-button routerLink="/">{{title}}</button></span>
+  <span class="spacer"></span>
+  <button mat-button (click)="handleLogInOutButton()">
+    <mat-icon>{{ loggedIn ? "logout" : "login" }}</mat-icon>
+  </button>
+</mat-toolbar>
 <router-outlet></router-outlet>

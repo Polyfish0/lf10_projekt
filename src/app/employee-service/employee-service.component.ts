@@ -21,8 +21,4 @@ export class EmployeeServiceComponent implements OnInit {
     if(!this.isLoggedIn)
       this.authService.login();
   }
-
-  public logout() {
-    this.authService.logout();
-  }
 }
