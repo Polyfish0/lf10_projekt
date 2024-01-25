@@ -2,7 +2,7 @@ import {APP_INITIALIZER, Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {Observable, of} from "rxjs";
 import {HttpClient, HttpClientModule, HttpHeaders} from "@angular/common/http";
-import {Employee} from "../Employee";
+import {Employee} from "../../utils/Employee";
 import {KeycloakService} from "keycloak-angular";
 
 @Component({

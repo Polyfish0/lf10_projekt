@@ -26,9 +26,11 @@ import {AuthService} from "./app.auth.service";
   styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'lf10StarterNew';
+  title = 'Toothless Dragon Dancing';
   loggedIn = this.authService.isLoggedIn();
+
   constructor(private readonly authService: AuthService) {}
+
   handleLogInOutButton() {
     if(this.loggedIn)
       this.authService.logout();
