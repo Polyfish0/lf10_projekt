@@ -7,24 +7,11 @@
       <input matInput (keyup)="applyFilter($event)" #input>
     </mat-form-field>
     <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear="true">
-      <ng-container *ngIf="displayRowButtons" matColumnDef="buttons">
+      <ng-container  matColumnDef="buttons">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button (click)="openDeleteDialog(element)"><mat-icon>delete</mat-icon></button>
           <button mat-icon-button (click)="openEditDialog(element)"><mat-icon>edit</mat-icon></button>
-        </td>
-      </ng-container>
-
-      <ng-container *ngIf="displayQualificationMenuSelection" matColumnDef="select">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox (change)="$event ? toggleAllRows() : null"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()"
-                        (change)="$event ? selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)"></mat-checkbox>
         </td>
       </ng-container>
 

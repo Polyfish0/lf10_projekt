@@ -18,7 +18,6 @@ export class ApiService {
           .set('Authorization', `Bearer ${token}`),
         observe: "response"
       }).subscribe(response => {
-        reject({response: response, text: "[getAllEmployee] status code is not 201"});
         switch (response.status) {
           case 200:
             if(response.body === null) {

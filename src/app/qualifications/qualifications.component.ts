@@ -70,6 +70,17 @@ export class QualificationsComponent implements OnInit {
   }
 
   openDeleteDialog(element: QualificationHTML) {
+    if(element.employees!.length > 0) {
+      this.dialog.open(ErrorDialog, {
+        data: {
+          header: "Qualifikation noch in verwendung",
+          content: ["Um eine Qualifikation löschen zu können, müssen erst alle Mitarbeiter aus dieser Entfernt werden!"]
+        }
+      });
+
+      return;
+    }
+
     this.dialog.open(DeleteDialog, {
       data: {_data: this.HTML2Normal(element), isEmployee: false}
     }).componentInstance.reloadEmployeeList.subscribe(_ => this.loadData());
@@ -119,6 +130,7 @@ export class QualificationsComponent implements OnInit {
       ));
 
       this.dataSource.data = htmlData;
+      this.dataSource._updatePaginator(result.length);
       this.isLoading = false;
     });
   }

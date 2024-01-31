@@ -28,8 +28,6 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatDivider} from "@angular/material/divider";
 import {MatIcon} from "@angular/material/icon";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
-import {resolve} from "@angular/compiler-cli";
-import {DeleteDialog} from "../delete-dialog/DeleteDialog";
 import {getErrorString} from "../../utils/Utils";
 
 @Component({

@@ -40,7 +40,7 @@ import {HttpResponse} from "@angular/common/http";
   ],
   styleUrl: "./employee-service.component.css"
 })
-export class EmployeeServiceComponent implements OnInit, OnChanges {
+export class EmployeeServiceComponent implements OnInit {
   @ViewChild(MatSort) set sort(sort: MatSort) {
     this.dataSource.sort = sort;
   }
@@ -51,32 +51,13 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
 
   @ViewChild(MatPaginator) getPaginator!: MatPaginator;
 
-  @Input() displayRowButtons: boolean = true;
-  @Input() displayQualificationMenuSelection: boolean = false;
-
   protected isLoading = true;
 
   displayedColumns: string[] = ["id", "lastName", "firstName", "street", "postcode", "city", "phone", "skillSet", "buttons"];
   dataSource: MatTableDataSource<EmployeeHTML> = new MatTableDataSource<EmployeeHTML>();
   originalDataSource: Employee[] = [];
-  selection = new SelectionModel<EmployeeHTML>(true, []);
 
   constructor(private readonly authService: AuthService, private readonly apiService: ApiService, private readonly dialog: MatDialog) {
-  }
-
-  ngOnChanges() {
-    let result: string[] = [];
-
-    if (this.displayQualificationMenuSelection)
-      result = result.concat(["select"]);
-
-    result = result.concat(["id", "lastName", "firstName", "street", "postcode", "city", "phone", "skillSet"]);
-
-    if (this.displayRowButtons)
-      result = result.concat(["buttons"])
-
-    console.log(result);
-    this.displayedColumns = result;
   }
 
   public ngOnInit() {
@@ -153,19 +134,6 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
         });
       }
     );
-  }
-
-  toggleAllRows() {
-    if (this.isAllSelected()) {
-      this.selection.clear();
-      return;
-    }
-
-    this.selection.select(...this.dataSource.data);
-  }
-
-  isAllSelected() {
-    return this.dataSource.data.length === this.selection.selected.length;
   }
 
   HTML2Normal(element: EmployeeHTML): Employee {

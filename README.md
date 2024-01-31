@@ -95,7 +95,9 @@ Des Weiteren ist der Client mit der Bezeichnung employee-management-service-fron
 
 # Bugs
 
-Die Angabe der von vorhandenen Einträgen und Seiten verändert sich nicht, wenn z. B. neue Mitarbeiter hinzugefügt werden.
+- Die Angabe der von vorhandenen Einträgen und Seiten verändert sich nicht, wenn z. B. neue Mitarbeiter hinzugefügt werden.
+- Die Dialoge könnten ein wenig Springen.
+- Da wir nur ein Dialog auf einmal Zeigen können, mussten wir für die Fehler in Dialogen auf alert zurückgreifen.
 
 ## Keycloak
 
@@ -105,6 +107,6 @@ Support nicht korrekt, in erster Linie bei Firefox, erkannt wird. Dadurch lädt 
 
 Aus diesem Grund haben wir dieses Verhalten in der Keycloak config abgeschaltet. Mehr informationen dazu finden sie [hier](https://www.keycloak.org/docs/latest/securing_apps/#session-status-iframe).
 
-# Endpunkte
+## Endpunkte
 
 Wir verwenden nicht alle Endpunkte da wir die Funktionalität anders umgesetzt haben.
