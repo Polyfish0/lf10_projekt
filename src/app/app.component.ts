@@ -1,12 +1,11 @@
-import {APP_INITIALIZER, Component} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { EmployeeListComponent } from "./employee-list/employee-list.component";
+import {Component} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {RouterLink, RouterOutlet} from "@angular/router";
 import {KeycloakAngularModule, KeycloakService} from "keycloak-angular";
 import {EmployeeServiceComponent} from "./employee-service/employee-service.component";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule, MatIconButton} from "@angular/material/button";
+import {MatButtonModule} from "@angular/material/button";
 import {AuthService} from "./app.auth.service";
 
 @Component({

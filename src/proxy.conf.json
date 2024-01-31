@@ -1,10 +1,11 @@
 {
   "/backend": {
-    "target": "http://localhost:8089/employees",
+    "target": "http://localhost:8089",
     "secure": false,
     "logLevel": "debug",
     "pathRewrite": {
-      "^/backend": ""
+      "^/backend/employees(/|$)": "/employees$1",
+      "^/backend/qualifications(/|$)": "/qualifications$1"
     },
     "changeOrigin": true
   }

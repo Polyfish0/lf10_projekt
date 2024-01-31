@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Benutzer löschen</h1>
+<div mat-dialog-content>
+  @if (data.isEmployee) {
+    Sind sie sich sicher, dass sie <strong>{{employee!.firstName}} {{employee!.lastName}}</strong> löschen möchten?
+  } @else {
+    Sind sie sich sicher, dass sie die Qualifikation <strong>{{qualification!.skill}}</strong> löschen möchten?
+  }
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="delete()">Ja</button>
+  <button mat-button (click)="closeDialog()" cdkFocusInitial>Nein</button>
+</div>

@@ -1,0 +1,124 @@
+<h1 mat-dialog-title>Benutzer bearbeiten</h1>
+<div mat-dialog-content>
+  <table class="full-width">
+    <tr>
+      <td>
+        <mat-form-field class="full-width" [class.fade-out]="!firstNameValidation.invalid && firstNameValidation.touched">
+          <mat-label>Vorname</mat-label>
+          <input matInput [formControl]="firstNameValidation" required>
+          @if (firstNameValidation.invalid) {
+            <mat-error>Es muss ein Vorname angegeben werden!</mat-error>
+          }
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field class="full-width" [class.fade-out]="!lastNameValidation.invalid && lastNameValidation.touched">
+          <mat-label>Nachname</mat-label>
+          <input matInput [formControl]="lastNameValidation" required>
+          @if (lastNameValidation.invalid) {
+            <mat-error>Es muss ein Nachname angegeben werden!</mat-error>
+          }
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width">
+    <tr>
+      <td>
+        <mat-form-field class="full-width" [class.fade-out]="!streetValidation.invalid && streetValidation.touched">
+          <mat-label>Straße</mat-label>
+          <input matInput [formControl]="streetValidation" required>
+          @if (streetValidation.invalid) {
+            <mat-error>Es muss eine Straße angegeben werden!</mat-error>
+          }
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width">
+    <tr>
+      <td>
+        <mat-form-field class="full-width" [class.fade-out]="!postcodeValidation.invalid && postcodeValidation.touched">
+          <mat-label>Postleitzahl</mat-label>
+          <input matInput [formControl]="postcodeValidation" required>
+          @if (postcodeValidation.invalid) {
+            <mat-error>Die Postleitzahl muss aus genau 5 Zahlen bestehen!</mat-error>
+          }
+        </mat-form-field>
+      </td>
+      <td>
+        <mat-form-field class="full-width" [class.fade-out]="!cityValidation.invalid && cityValidation.touched">
+          <mat-label>Stadt</mat-label>
+          <input matInput [formControl]="cityValidation" required>
+          @if (cityValidation.invalid) {
+            <mat-error>Es muss eine Stadt angegeben werden!</mat-error>
+          }
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <table class="full-width">
+    <tr>
+      <td>
+        <mat-form-field class="full-width" [class.fade-out]="!phoneValidation.invalid && phoneValidation.touched">
+          <mat-label>Telefon</mat-label>
+          <input matInput [formControl]="phoneValidation">
+          @if (phoneValidation.invalid) {
+            <mat-error>Es muss eine Telefonnummer angegeben werden!</mat-error>
+          }
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <mat-divider></mat-divider>
+  <br>
+  <table class="full-width">
+    <tr>
+      <td>
+        <mat-form-field class="full-width">
+          <mat-label>Filter Qualifikationen</mat-label>
+          <input matInput (keyup)="applyFilter($event)" #input>
+        </mat-form-field>
+      </td>
+    </tr>
+  </table>
+  <table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc" matSortDisableClear="true" class="full-width">
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()"></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)"></mat-checkbox>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+      <td mat-cell *matCellDef="let element">{{element.id}}</td>
+    </ng-container>
+    <ng-container matColumnDef="skill">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Qualifikation </th>
+      <td mat-cell *matCellDef="let element">{{element.skill}}</td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        (click)="selection.toggle(row)">
+    </tr>
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]" showFirstLastButtons="true"></mat-paginator>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [disabled]="
+        firstNameValidation.invalid ||
+        lastNameValidation.invalid ||
+        streetValidation.invalid ||
+        postcodeValidation.invalid ||
+        cityValidation.invalid ||
+        phoneValidation.invalid" (click)="saveEmployee()">Speichern</button>
+  <button mat-button cdkFocusInitial (click)="dialogRef.close()">Abbrechen</button>
+</div>

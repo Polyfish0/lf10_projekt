@@ -1,0 +1,36 @@
+td {
+  padding-right: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+form {
+  min-width: 150px;
+  max-width: 800px;
+  width: 100%;
+  table-layout: fixed;
+}
+
+mat-form-field.ng-invalid.ng-touched {
+  animation: fade-in;
+  animation-duration: 0.3s;
+  margin-bottom: 16px;
+}
+
+.fade-out {
+  animation: fade-out;
+  animation-duration: 0.3s;
+  margin-bottom: 0;
+}
+
+@keyframes fade-out {
+  from {margin-bottom: 16px;}
+  to {margin-bottom: 0;}
+}
+
+@keyframes fade-in {
+  from {margin-bottom: 0;}
+  to {margin-bottom: 16px;}
+}
