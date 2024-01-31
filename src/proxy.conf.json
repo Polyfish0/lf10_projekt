@@ -5,6 +5,7 @@
     "logLevel": "debug",
     "pathRewrite": {
       "^/backend/employees(/|$)": "/employees$1",
+      "^/backend/employees/([0-9]*)/qualifications(/|$)": "/employees/$1/qualifications",
       "^/backend/qualifications(/|$)": "/qualifications$1"
     },
     "changeOrigin": true

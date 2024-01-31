@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Benutzer löschen</h1>
+<h1 mat-dialog-title>{{data.isEmployee ? "Mitarbeiter" : "Qualifikation"}} löschen</h1>
 <div mat-dialog-content>
   @if (data.isEmployee) {
     Sind sie sich sicher, dass sie <strong>{{employee!.firstName}} {{employee!.lastName}}</strong> löschen möchten?
@@ -7,6 +7,10 @@
   }
 </div>
 <div mat-dialog-actions>
-  <button mat-button (click)="delete()">Ja</button>
-  <button mat-button (click)="closeDialog()" cdkFocusInitial>Nein</button>
+  @if (!saving) {
+    <button mat-button (click)="delete()">Ja</button>
+    <button mat-button (click)="closeDialog()" cdkFocusInitial>Nein</button>
+  } @else {
+    <mat-spinner [diameter]="40"></mat-spinner>
+  }
 </div>

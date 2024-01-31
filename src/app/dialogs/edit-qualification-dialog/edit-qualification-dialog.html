@@ -1,13 +1,13 @@
-<h1 mat-dialog-title>Benutzer bearbeiten</h1>
+<h1 mat-dialog-title>Qualifikation {{data.id === undefined ? "erstellen" : "bearbeiten"}}</h1>
 <div mat-dialog-content>
   <table class="full-width">
     <tr>
       <td>
         <mat-form-field class="full-width" [class.fade-out]="!skillValidation.invalid && skillValidation.touched">
-          <mat-label>Nachname</mat-label>
+          <mat-label>Qualifikation</mat-label>
           <input matInput [formControl]="skillValidation" required>
           @if (skillValidation.invalid) {
-            <mat-error>Es muss ein Nachname angegeben werden!</mat-error>
+            <mat-error>Es muss ein Name für die Qualifikation angegeben werden!</mat-error>
           }
         </mat-form-field>
       </td>
@@ -32,7 +32,7 @@
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="$event ? selection.toggle(row) : null"
+                      (change)="employeeSelectedEvent($event, row)"
                       [checked]="selection.isSelected(row)"></mat-checkbox>
       </td>
     </ng-container>
@@ -40,9 +40,13 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
       <td mat-cell *matCellDef="let element">{{element.id}}</td>
     </ng-container>
-    <ng-container matColumnDef="skill">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Qualifikation </th>
-      <td mat-cell *matCellDef="let element">{{element.skill}}</td>
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Nachname </th>
+      <td mat-cell *matCellDef="let element">{{element.lastName}}</td>
+    </ng-container>
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Vorname </th>
+      <td mat-cell *matCellDef="let element">{{element.firstName}}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -54,6 +58,10 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]" showFirstLastButtons="true"></mat-paginator>
 </div>
 <div mat-dialog-actions>
-  <button mat-button [disabled]="skillValidation.invalid" (click)="saveQualification()">Speichern</button>
-  <button mat-button cdkFocusInitial (click)="dialogRef.close()">Abbrechen</button>
+  @if(!saving) {
+    <button mat-button [disabled]="skillValidation.invalid" (click)="saveQualification()">Speichern</button>
+    <button mat-button cdkFocusInitial (click)="dialogRef.close()">Abbrechen</button>
+  } @else {
+    <mat-spinner [diameter]="40"></mat-spinner>
+  }
 </div>

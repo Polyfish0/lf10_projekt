@@ -27,6 +27,8 @@ import {MatSort, MatSortHeader} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatDivider} from "@angular/material/divider";
 import {MatIcon} from "@angular/material/icon";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {getErrorString} from "../../utils/Utils";
 
 @Component({
   selector: "delete-dialog",
@@ -57,7 +59,8 @@ import {MatIcon} from "@angular/material/icon";
     MatPaginator,
     MatDivider,
     MatIcon,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinner
   ]
 })
 export class EditEmployeeDialog implements OnInit {
@@ -74,6 +77,7 @@ export class EditEmployeeDialog implements OnInit {
   displayedColumns: string[] = ["select", "id", "skill"];
   dataSource = new MatTableDataSource<Qualification>();
   selection = new SelectionModel<Qualification>(true, []);
+  saving: boolean = false;
 
   firstNameValidation = new FormControl("", [Validators.required]);
   lastNameValidation = new FormControl("", [Validators.required]);
@@ -94,7 +98,7 @@ export class EditEmployeeDialog implements OnInit {
 
       if(this.data.id !== undefined)
         data.forEach(i => this.hasQualification(i.id!) ? this.selection.select(i) : null);
-    });
+    }).catch(error => alert(getErrorString(error)));
 
     this.firstNameValidation.setValue(this.data.firstName!);
     this.lastNameValidation.setValue(this.data.lastName!);
@@ -114,6 +118,7 @@ export class EditEmployeeDialog implements OnInit {
   }
 
   saveEmployee() {
+    this.saving = true;
     let newEmployee: EmployeePut = new EmployeePut(
       this.lastNameValidation.value!,
       this.firstNameValidation.value!,
@@ -125,9 +130,17 @@ export class EditEmployeeDialog implements OnInit {
     );
 
     if(this.data.id === undefined) {
-      this.api.createEmployee(newEmployee).then(_ => this.finish());
+      this.api.createEmployee(newEmployee).then(_ => this.finish()).catch(error => {
+        alert(getErrorString(error));
+        this.saving = false;
+      });
     }else {
-      this.api.updateEmployee(newEmployee, this.data.id!).then(_ => this.finish());
+      this.api.updateEmployee(newEmployee, this.data.id!)
+        .then(_ => this.finish())
+        .catch(error => {
+        alert(getErrorString(error));
+        this.saving = false;
+      });
     }
   }
 
@@ -150,6 +163,7 @@ export class EditEmployeeDialog implements OnInit {
   }
 
   hasQualification(qualificationId: number) {
+    console.log(this.data.skillSet);
     return this.data.skillSet!.some(skill => skill.id === qualificationId);
   }
 

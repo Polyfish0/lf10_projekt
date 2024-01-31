@@ -7,6 +7,7 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {AuthService} from "./app.auth.service";
+import {MatSidenavContent} from "@angular/material/sidenav";
 
 @Component({
   selector: 'app-root',
@@ -19,7 +20,8 @@ import {AuthService} from "./app.auth.service";
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
-    RouterLink
+    RouterLink,
+    MatSidenavContent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

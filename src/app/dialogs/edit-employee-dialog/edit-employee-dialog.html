@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Benutzer bearbeiten</h1>
+<h1 mat-dialog-title>Benutzer {{data.id === undefined ? "erstellen" : "bearbeiten"}}</h1>
 <div mat-dialog-content>
   <table class="full-width">
     <tr>
@@ -113,12 +113,16 @@
   <mat-paginator [pageSizeOptions]="[5, 10, 20, 50, 100]" showFirstLastButtons="true"></mat-paginator>
 </div>
 <div mat-dialog-actions>
-  <button mat-button [disabled]="
+  @if(!saving) {
+    <button mat-button [disabled]="
         firstNameValidation.invalid ||
         lastNameValidation.invalid ||
         streetValidation.invalid ||
         postcodeValidation.invalid ||
         cityValidation.invalid ||
         phoneValidation.invalid" (click)="saveEmployee()">Speichern</button>
-  <button mat-button cdkFocusInitial (click)="dialogRef.close()">Abbrechen</button>
+    <button mat-button cdkFocusInitial (click)="dialogRef.close()">Abbrechen</button>
+  } @else {
+    <mat-spinner [diameter]="40"></mat-spinner>
+  }
 </div>

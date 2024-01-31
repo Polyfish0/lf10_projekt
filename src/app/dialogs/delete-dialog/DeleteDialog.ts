@@ -14,6 +14,8 @@ import {Employee} from "../../utils/Employee";
 import {ApiService} from "../../utils/api.service";
 import {Qualification} from "../../utils/Qualification";
 import {TypeofExpr} from "@angular/compiler";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {getErrorString} from "../../utils/Utils";
 
 @Component({
   selector: "delete-dialog",
@@ -26,7 +28,8 @@ import {TypeofExpr} from "@angular/compiler";
     MatButtonModule,
     MatDialogContent,
     MatDialogTitle,
-    FormsModule
+    FormsModule,
+    MatProgressSpinner
   ]
 })
 export class DeleteDialog {
@@ -34,6 +37,7 @@ export class DeleteDialog {
 
   employee: Employee | undefined;
   qualification: Qualification | undefined;
+  saving: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<DeleteDialog>,
@@ -47,10 +51,17 @@ export class DeleteDialog {
   }
 
   delete() {
+    this.saving = true;
     if(this.data.isEmployee)
-      this.api.deleteEmployee(this.data._data.id!).then(_ => this.finish());
+      this.api.deleteEmployee(this.data._data.id!).then(_ => this.finish()).catch(error => {
+        alert(getErrorString(error));
+        this.saving = false;
+      });
     else
-      this.api.deleteQualification(this.data._data.id!).then(_ => this.finish());
+      this.api.deleteQualification(this.data._data.id!).then(_ => this.finish()).catch(error => {
+        alert(getErrorString(error));
+        this.saving = false;
+      });
   }
 
   finish() {
@@ -61,6 +72,4 @@ export class DeleteDialog {
   closeDialog() {
     this.dialogRef.close();
   }
-
-  protected readonly Employee = Employee;
 }

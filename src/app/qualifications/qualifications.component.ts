@@ -12,9 +12,11 @@ import {MatIconButton} from "@angular/material/button";
 import {DeleteDialog} from "../dialogs/delete-dialog/DeleteDialog";
 import {MatDialog} from "@angular/material/dialog";
 import {MatToolbarModule, MatToolbarRow} from "@angular/material/toolbar";
-import {Qualification} from "../utils/Qualification";
+import {Qualification, QualificationHTML} from "../utils/Qualification";
 import {EditQualificationDialog} from "../dialogs/edit-qualification-dialog/EditQualificationDialog";
 import {Employee} from "../utils/Employee";
+import {HttpResponse} from "@angular/common/http";
+import {ErrorDialog} from "../dialogs/error-dialog/ErrorDialog";
 
 @Component({
   selector: "app-qualification-service",
@@ -46,8 +48,9 @@ export class QualificationsComponent implements OnInit {
   private isLoggedIn = false;
   protected isLoading = true;
 
-  displayedColumns: string[] = ["buttons", "id", "skill", "employee"];
-  dataSource: MatTableDataSource<Qualification> = new MatTableDataSource<Qualification>();
+  displayedColumns: string[] = ["id", "skill", "employee", "buttons"];
+  dataSource: MatTableDataSource<QualificationHTML> = new MatTableDataSource<QualificationHTML>();
+  realDataSource: Qualification[] = [];
 
   constructor(private readonly authService: AuthService, private readonly apiService: ApiService, private readonly dialog: MatDialog) {}
 
@@ -66,15 +69,15 @@ export class QualificationsComponent implements OnInit {
     this.paginator.pageIndex = 0;
   }
 
-  openDeleteDialog(element: Qualification) {
+  openDeleteDialog(element: QualificationHTML) {
     this.dialog.open(DeleteDialog, {
-      data: {_data: element, isEmployee: false}
+      data: {_data: this.HTML2Normal(element), isEmployee: false}
     }).componentInstance.reloadEmployeeList.subscribe(_ => this.loadData());
   }
 
-  openEditDialog(element: Qualification) {
+  openEditDialog(element: QualificationHTML) {
     this.dialog.open(EditQualificationDialog, {
-      data: element
+      data: this.HTML2Normal(element)
     }).componentInstance.reloadEmployeeList.subscribe(_ => this.loadData());
   }
 
@@ -87,15 +90,44 @@ export class QualificationsComponent implements OnInit {
   loadData() {
     this.apiService.getAllQualifications().then(async result => {
       for(let i = 0; i < result.length; i++) {
-        result[i].employees = (await this.apiService.getEmployeesByQualification(result[i].id!)).employees;
+        result[i].employees = (await this.apiService.getEmployeesByQualification(result[i].id!).catch(error => {
+          let httpError: HttpResponse<object> = error.response as HttpResponse<object>;
+
+          this.isLoading = false;
+          this.dialog.open(ErrorDialog, {
+            data: {
+              header: "Konnte die Daten nicht vom Server Abrufen",
+              content: [
+                "Status Code: " + httpError.status + " " + httpError.statusText,
+                "Short error: " + error.text,
+                "Long error: " + httpError.body
+              ]
+            }
+          });
+        }))!.employees;
       }
 
-      this.dataSource.data = result;
+      this.realDataSource = result;
+      let htmlData: QualificationHTML[] = [];
+
+      result.forEach(currentElement => htmlData.push(
+        new QualificationHTML(
+          currentElement.id,
+          currentElement.skill,
+          this.formatNames(currentElement.employees!)
+        )
+      ));
+
+      this.dataSource.data = htmlData;
       this.isLoading = false;
     });
   }
 
-  format(element: {id: number, firstName: string, lastName: string}[]) {
+  formatNames(element: Employee[]) {
     return element.map(e => `${e.firstName} ${e.lastName}`).join(", ");
+  }
+
+  HTML2Normal(element: QualificationHTML): Qualification {
+    return this.realDataSource.find(currentElement => currentElement.id === element.id)!;
   }
 }

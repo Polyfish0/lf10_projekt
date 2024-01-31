@@ -3,7 +3,7 @@ import {AuthService} from "../app.auth.service";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {MatTableDataSource, MatTableModule} from "@angular/material/table";
-import {Employee} from "../utils/Employee";
+import {Employee, EmployeeHTML} from "../utils/Employee";
 import {ApiService} from "../utils/api.service";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatSort, MatSortModule} from "@angular/material/sort";
@@ -13,12 +13,12 @@ import {MatIconButton} from "@angular/material/button";
 import {DeleteDialog} from "../dialogs/delete-dialog/DeleteDialog";
 import {MatDialog} from "@angular/material/dialog";
 import {EditEmployeeDialog} from "../dialogs/edit-employee-dialog/EditEmployeeDialog";
-import {CollectionViewer, DataSource, SelectionModel} from "@angular/cdk/collections";
-import {Observable, ReplaySubject} from "rxjs";
-import {MatToolbar, MatToolbarModule, MatToolbarRow} from "@angular/material/toolbar";
+import {SelectionModel} from "@angular/cdk/collections";
+import {MatToolbarModule, MatToolbarRow} from "@angular/material/toolbar";
 import {NgIf} from "@angular/common";
 import {MatCheckbox} from "@angular/material/checkbox";
-import {Qualification} from "../utils/Qualification";
+import {ErrorDialog} from "../dialogs/error-dialog/ErrorDialog";
+import {HttpResponse} from "@angular/common/http";
 
 @Component({
   selector: "app-employee-service",
@@ -57,20 +57,22 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
   protected isLoading = true;
 
   displayedColumns: string[] = ["id", "lastName", "firstName", "street", "postcode", "city", "phone", "skillSet", "buttons"];
-  dataSource: MatTableDataSource<Employee> = new MatTableDataSource<Employee>();
-  selection = new SelectionModel<Employee>(true, []);
+  dataSource: MatTableDataSource<EmployeeHTML> = new MatTableDataSource<EmployeeHTML>();
+  originalDataSource: Employee[] = [];
+  selection = new SelectionModel<EmployeeHTML>(true, []);
 
-  constructor(private readonly authService: AuthService, private readonly apiService: ApiService, private readonly dialog: MatDialog) {}
+  constructor(private readonly authService: AuthService, private readonly apiService: ApiService, private readonly dialog: MatDialog) {
+  }
 
   ngOnChanges() {
     let result: string[] = [];
 
-    if(this.displayQualificationMenuSelection)
+    if (this.displayQualificationMenuSelection)
       result = result.concat(["select"]);
 
     result = result.concat(["id", "lastName", "firstName", "street", "postcode", "city", "phone", "skillSet"]);
 
-    if(this.displayRowButtons)
+    if (this.displayRowButtons)
       result = result.concat(["buttons"])
 
     console.log(result);
@@ -78,7 +80,7 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
   }
 
   public ngOnInit() {
-    if(!this.authService.isLoggedIn())
+    if (!this.authService.isLoggedIn())
       this.authService.login();
 
     this.loadData();
@@ -94,15 +96,15 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
     return skillSet.map(obj => obj.skill).join(', ');
   }
 
-  openDeleteDialog(element: Employee) {
+  openDeleteDialog(element: EmployeeHTML) {
     this.dialog.open(DeleteDialog, {
-      data: {_data: element, isEmployee: true}
+      data: {_data: this.HTML2Normal(element), isEmployee: true}
     }).componentInstance.reloadEmployeeList.subscribe(_ => this.loadData());
   }
 
-  openEditDialog(element: Employee) {
+  openEditDialog(element: EmployeeHTML) {
     this.dialog.open(EditEmployeeDialog, {
-      data: element
+      data: this.HTML2Normal(element)
     }).componentInstance.reloadEmployeeList.subscribe(_ => this.loadData());
   }
 
@@ -113,11 +115,44 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
   }
 
   loadData() {
-    this.apiService.getAllEmployee().then(result => {
-      this.dataSource.data = result;
-      this.dataSource._updatePaginator(result.length);
-      this.isLoading = false;
-    });
+    this.apiService.getAllEmployee()
+      .then(result => {
+          this.originalDataSource = result;
+          let htmlData: EmployeeHTML[] = []
+
+          result.forEach(currentElement => htmlData.push(
+            new EmployeeHTML(
+              currentElement.id,
+              currentElement.lastName,
+              currentElement.firstName,
+              currentElement.street,
+              currentElement.postcode,
+              currentElement.city,
+              currentElement.phone,
+              this.formatSkills(currentElement.skillSet!)
+            )
+          ));
+
+          this.dataSource.data = htmlData;
+          this.dataSource._updatePaginator(result.length);
+          this.isLoading = false;
+        }
+      ).catch(error => {
+        let httpError: HttpResponse<object> = error.response as HttpResponse<object>;
+
+        this.isLoading = false;
+        this.dialog.open(ErrorDialog, {
+          data: {
+            header: "Konnte die Daten nicht vom Server Abrufen",
+            content: [
+              "Status Code: " + httpError.status + " " + httpError.statusText,
+              "Short error: " + error.text,
+              "Long error: " + httpError.body
+            ]
+          }
+        });
+      }
+    );
   }
 
   toggleAllRows() {
@@ -131,5 +166,9 @@ export class EmployeeServiceComponent implements OnInit, OnChanges {
 
   isAllSelected() {
     return this.dataSource.data.length === this.selection.selected.length;
+  }
+
+  HTML2Normal(element: EmployeeHTML): Employee {
+    return this.originalDataSource.find(currentEmployee => currentEmployee.id == element.id)!;
   }
 }

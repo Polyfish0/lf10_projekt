@@ -1,11 +1,40 @@
-<strong>Willkommen auf der Startseite. Unten hast du Knöpfe um zu den jeweiligen Services zu gelangen</strong><br>
-<p>
-  <span style="margin-left: 8px"></span>
-  <button mat-raised-button routerLink="/employees">
-    Employees
-  </button>
-  <span style="margin-right: 8px"></span>
-  <button mat-raised-button routerLink="/qualifications">
-    Qualifications
-  </button>
-</p>
+<style>
+  .container {
+    height: 200px;
+    position: relative;
+    top: 35%;
+    -ms-transform: translate(-50%, -50%);
+  }
+  .vertical-center {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+
+<div class="container">
+  <div class="vertical-center">
+    <strong>Willkommen auf der Startseite. Unten hast du Knöpfe um zu den jeweiligen Services zu gelangen</strong><br><br>
+
+    <p style="text-align: center; justify-content: center">
+      <button mat-raised-button color="primary" routerLink="/employees">
+        <mat-icon>badge</mat-icon>
+        Mitarbeiter
+      </button>
+      <span style="margin-right: 8px"></span>
+      <button  mat-raised-button color="primary" routerLink="/qualifications">
+        <mat-icon>stars</mat-icon>
+        Qualifikationen
+      </button>
+    </p>
+  </div>
+</div>
+
+<!-- Liste mit extra Qualifikationen-Button Variante:
+extension
+group
+construction
+stars
+history_edu
+-->

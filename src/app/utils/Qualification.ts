@@ -3,7 +3,15 @@ import {Employee} from "./Employee";
 export class Qualification {
   constructor(public id?: number,
               public skill?: string,
-              public employees?: Employee[]) {}
+              public employees?: Employee[]) {
+  }
+}
+
+export class QualificationHTML {
+  constructor(public id?: number,
+              public skill?: string,
+              public employees?: string) {
+  }
 }
 
 export class QualificationPut {

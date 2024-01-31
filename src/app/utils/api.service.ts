@@ -10,7 +10,7 @@ export class ApiService {
 
   getAllEmployee(): Promise<Employee[]> {
     return new Promise<Employee[]>(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.get<Employee[]>('/backend/employees', {
         headers: new HttpHeaders()
@@ -18,10 +18,11 @@ export class ApiService {
           .set('Authorization', `Bearer ${token}`),
         observe: "response"
       }).subscribe(response => {
+        reject({response: response, text: "[getAllEmployee] status code is not 201"});
         switch (response.status) {
           case 200:
             if(response.body === null) {
-              return reject("body is null");
+              return reject({response: response, text: "[getAllEmployee] body is null"});
             }
 
             return resolve(response.body);
@@ -31,7 +32,7 @@ export class ApiService {
             return;
 
           default:
-            return reject("status code is not 201");
+            return reject({response: response, text: "[getAllEmployee] status code is not 201"});
         }
       });
     });
@@ -39,7 +40,7 @@ export class ApiService {
 
   deleteEmployee(id: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.delete("/backend/employees/" + id, {
         headers: new HttpHeaders()
@@ -56,7 +57,7 @@ export class ApiService {
             return;
 
           default:
-            return reject("status code is not 204");
+            return reject({response: response, text: "[deleteEmployee] status code is not 204"});
         }
       });
     });
@@ -64,7 +65,7 @@ export class ApiService {
 
   updateEmployee(employee: EmployeePut, id: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.put("/backend/employees/" + id, employee, {
         headers: new HttpHeaders()
@@ -81,7 +82,7 @@ export class ApiService {
             return;
 
           default:
-            return reject("status code is not 200");
+            return reject({response: response, text: "[updateEmployee] status code is not 200"});
         }
       });
     });
@@ -89,7 +90,7 @@ export class ApiService {
 
   createEmployee(employee: EmployeePut): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.post("/backend/employees/", employee, {
         headers: new HttpHeaders()
@@ -106,7 +107,62 @@ export class ApiService {
             return;
 
           default:
-            return reject("status code is not 201");
+            return reject({response: response, text: "[createEmployee] status code is not 201"});
+        }
+      });
+    });
+  }
+
+  addQualificationToUser(id: number, skill: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      const token = await this.authService.getToken();
+
+      this.http.post("/backend/employees/" + id + "/qualifications/", {
+        "skill": skill
+      }, {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json')
+          .set('Authorization', `Bearer ${token}`),
+        observe: "response"
+      }).subscribe(response => {
+        switch (response.status) {
+          case 200:
+            return resolve();
+
+          case 401:
+            this.authService.logout().then(_ => this.authService.login());
+            return;
+
+          default:
+            return reject({response: response, text: "[addQualificationToUser] status code is not 200"});
+        }
+      });
+    });
+  }
+
+  deleteQualificationFromUser(id: number, skill: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+      const token = await this.authService.getToken();
+
+      this.http.request("delete", "/backend/employees/" + id + "/qualifications/", {
+        headers: new HttpHeaders()
+          .set('Content-Type', 'application/json')
+          .set('Authorization', `Bearer ${token}`),
+        observe: "response",
+        body: {
+          "skill": skill
+        }
+      }).subscribe(response => {
+        switch (response.status) {
+          case 200:
+            return resolve();
+
+          case 401:
+            this.authService.logout().then(_ => this.authService.login());
+            return;
+
+          default:
+            return reject({response: response, text: "[deleteQualificationFromUser] status code is not 201"});
         }
       });
     });
@@ -114,7 +170,7 @@ export class ApiService {
 
   getAllQualifications(): Promise<Qualification[]> {
     return new Promise<Qualification[]>(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.get<Qualification[]>("/backend/qualifications/", {
         headers: new HttpHeaders()
@@ -125,7 +181,7 @@ export class ApiService {
         switch (response.status) {
           case 200:
             if(response.body === null) {
-              return reject("body is null");
+              return reject({response: response, text: "[getAllQualifications] body is null"});
             }
 
             return resolve(response.body);
@@ -135,7 +191,7 @@ export class ApiService {
             return;
 
           default:
-            return reject("status code is not 201");
+            return reject({response: response, text: "[getAllQualifications] status code is not 201"});
         }
       });
     });
@@ -143,7 +199,7 @@ export class ApiService {
 
   getEmployeesByQualification(id: number): Promise<QualificationEmployees> {
     return new Promise<QualificationEmployees>(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.get<QualificationEmployees>("/backend/qualifications/" + id + "/employees", {
         headers: new HttpHeaders()
@@ -154,7 +210,7 @@ export class ApiService {
         switch (response.status) {
           case 200:
             if(response.body === null) {
-              return reject("body is null");
+              return reject({response: response, text: "[getEmployeesByQualification] body is null"});
             }
 
             return resolve(response.body);
@@ -164,7 +220,7 @@ export class ApiService {
             return;
 
           default:
-            reject("status code is not 201");
+            reject({response: response, text: "[getEmployeesByQualification] status code is not 201"});
         }
       });
     });
@@ -172,7 +228,7 @@ export class ApiService {
 
   updateQualification(qualification: QualificationPut, id: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.put("/backend/qualifications/" + id, qualification, {
         headers: new HttpHeaders()
@@ -181,7 +237,7 @@ export class ApiService {
         observe: "response"
       }).subscribe(response => {
         switch (response.status) {
-          case 204:
+          case 200:
             return resolve();
 
           case 401:
@@ -189,15 +245,15 @@ export class ApiService {
             return;
 
           default:
-            return reject("status code is not 201");
+            return reject({response: response, text: "[updateQualification] status code is not 200"});
         }
       });
     });
   }
 
-  createQualification(qualification: QualificationPut): Promise<void> {
-    return new Promise<void>(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+  createQualification(qualification: QualificationPut): Promise<Qualification> {
+    return new Promise<Qualification>(async (resolve, reject) => {
+      const token = await this.authService.getToken();
 
       this.http.post("/backend/qualifications/", qualification, {
         headers: new HttpHeaders()
@@ -207,14 +263,17 @@ export class ApiService {
       }).subscribe(response => {
         switch (response.status) {
           case 201:
-            return resolve();
+            if(response.body === null)
+              return reject({response: response, text: "[createQualification] response body is null"});
+
+            return resolve(response.body!);
 
           case 401:
             this.authService.logout().then(_ => this.authService.login());
             return;
 
           default:
-            return reject("status code is not 201");
+            return reject({response: response, text: "[createQualification] status code is not 201"});
         }
       });
     });
@@ -222,7 +281,7 @@ export class ApiService {
 
   deleteQualification(id: number): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      let token = await this.authService.getToken();
+      const token = await this.authService.getToken();
 
       this.http.delete("/backend/qualifications/" + id, {
         headers: new HttpHeaders()
@@ -239,7 +298,7 @@ export class ApiService {
             break;
 
           default:
-            return reject("status code is not 204");
+            return reject({response: response, text: "[deleteQualification] status code is not 204"});
         }
       });
     });

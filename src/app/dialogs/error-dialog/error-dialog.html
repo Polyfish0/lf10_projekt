@@ -1,0 +1,9 @@
+<h1 mat-dialog-title><mat-icon color="primary">error</mat-icon> Fehler: {{data.header}}</h1>
+<div mat-dialog-content>
+  <div *ngFor="let line of data.content">
+    {{line}}<br>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Ok</button>
+</div>

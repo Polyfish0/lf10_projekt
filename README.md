@@ -95,10 +95,16 @@ Des Weiteren ist der Client mit der Bezeichnung employee-management-service-fron
 
 # Bugs
 
-Trage hier die Features ein, die nicht funktionieren. Beschreibe den jeweiligen Fehler. 
-
 Die Angabe der von vorhandenen Einträgen und Seiten verändert sich nicht, wenn z. B. neue Mitarbeiter hinzugefügt werden.
 
 ## Keycloak
 
-Key
+Keycloak verwendet im Hintergrund, um z. B. in allen Tabs auf einmal den Logout zu erkennen, ein iFrame. Dieses iFrame benötigt Third-Party cookies zum Funktionieren.
+Keycloak besitzt Code, um den Browser Support von Third-Party cookies zu erkennen, allerdings hat dieser Code einen [Bug](https://github.com/keycloak/keycloak/issues/22839), welcher dazu führt, dass der Third-Party 
+Support nicht korrekt, in erster Linie bei Firefox, erkannt wird. Dadurch lädt Keycloak die ganze Angular Anwendung komplett neu und es entsteht ein endloser loop.
+
+Aus diesem Grund haben wir dieses Verhalten in der Keycloak config abgeschaltet. Mehr informationen dazu finden sie [hier](https://www.keycloak.org/docs/latest/securing_apps/#session-status-iframe).
+
+# Endpunkte
+
+Wir verwenden nicht alle Endpunkte da wir die Funktionalität anders umgesetzt haben.
